@@ -1,10 +1,26 @@
 import streamlit as st
 import hashlib
 from cryptography.fernet import Fernet
+import json
+import os
+                                            #? DATA STORAGE
+DATA_FILE = "secure_data.json"
+
+def load_data_from_file():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_data_to_file(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f)
+
+                                            #? DATA STORAGE
 
 # Initialize session state variables
 if 'stored_data' not in st.session_state:
-    st.session_state.stored_data = {}
+    st.session_state.stored_data =  load_data_from_file()
 
 if 'failed_attempts' not in st.session_state:
     st.session_state.failed_attempts = 0
@@ -33,13 +49,12 @@ def decrypt_data(enc_text, passkey):
         st.session_state.failed_attempts += 1
         return None
 
-# Navigation
 if st.session_state.failed_attempts >= 3:
     st.session_state.page = 'Login'
 
 st.title("🔒 Secure Data Encryption System")
 tab1, tab2, tab3 = st.tabs(["Store Data", "Retrieve Data", "Login"])
-
+#* Store Data Tab 
 with tab1:
     st.subheader("📂 Store Data Securely")
     user_data = st.text_area("Enter Data:")
@@ -53,6 +68,8 @@ with tab1:
                 "encrypted_text": encrypted_text,
                 "passkey": hashed_passkey
             }
+            save_data_to_file(st.session_state.stored_data)
+
             st.success("✅ Data stored securely!")
             st.write("Save the following encrypted text to retrieve it later:")
             st.code(encrypted_text)
