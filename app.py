@@ -17,7 +17,7 @@ if 'page' not in st.session_state:
 
 cipher = Fernet(st.session_state.KEY)
 
-def hash_passkey(passkey):
+def hash_passkey(passkey):  
     return hashlib.sha256(passkey.encode()).hexdigest()
 
 def encrypt_data(text):
@@ -37,24 +37,13 @@ def decrypt_data(enc_text, passkey):
 if st.session_state.failed_attempts >= 3:
     st.session_state.page = 'Login'
 
-menu = ["Home", "Store Data", "Retrieve Data", "Login"]
-choice = st.sidebar.selectbox("Navigation", menu, index=menu.index(st.session_state.page))
+st.title("🔒 Secure Data Encryption System")
+tab1, tab2, tab3 = st.tabs(["Store Data", "Retrieve Data", "Login"])
 
-# Sync session page with sidebar choice, except forced login page
-if st.session_state.page != 'Login' and choice != st.session_state.page:
-    st.session_state.page = choice
-
-# Pages
-if st.session_state.page == "Home":
-    st.title("🔒 Secure Data Encryption System")
-    st.subheader("🏠 Welcome to the Secure Data System")
-    st.write("Use this app to **securely store and retrieve data** using unique passkeys.")
-
-elif st.session_state.page == "Store Data":
-    st.title("🔒 Secure Data Encryption System")
+with tab1:
     st.subheader("📂 Store Data Securely")
     user_data = st.text_area("Enter Data:")
-    passkey = st.text_input("Enter Passkey:", type="password")
+    passkey = st.text_input("Enter Passkey:", type="password", key="store_passkey")
 
     if st.button("Encrypt & Save"):
         if user_data and passkey:
@@ -70,38 +59,38 @@ elif st.session_state.page == "Store Data":
         else:
             st.error("⚠️ Both fields are required!")
 
-elif st.session_state.page == "Retrieve Data":
-    st.title("🔒 Secure Data Encryption System")
-    st.subheader("🔍 Retrieve Your Data")
-    encrypted_text = st.text_area("Enter Encrypted Data:")
-    passkey = st.text_input("Enter Passkey:", type="password")
+if st.session_state.page != "Login":
+    with tab2:
+        st.subheader("🔍 Retrieve Your Data")
+        encrypted_text = st.text_area("Enter Encrypted Data:")
+        passkey = st.text_input("Enter Passkey:", type="password", key="retrieve_passkey")
 
-    if st.button("Decrypt"):
-        if encrypted_text and passkey:
-            decrypted_text = decrypt_data(encrypted_text, passkey)
+        if st.button("Decrypt"):
+            if encrypted_text and passkey:
+                decrypted_text = decrypt_data(encrypted_text, passkey)
 
-            if decrypted_text:
-                st.success(f"✅ Decrypted Data: {decrypted_text}")
+                if decrypted_text:
+                    st.success(f"✅ Decrypted Data:↲")
+                    st.code(decrypted_text)
+                else:
+                    remaining = 3 - st.session_state.failed_attempts
+                    st.error(f"❌ Incorrect passkey! Attempts remaining: {remaining}")
+                    if st.session_state.failed_attempts >= 3:
+                        st.warning("🔒 Too many failed attempts! Redirecting to Login Page.")
+                        st.session_state.page = 'Login'
+                        st.rerun()
             else:
-                remaining = 3 - st.session_state.failed_attempts
-                st.error(f"❌ Incorrect passkey! Attempts remaining: {remaining}")
-                if st.session_state.failed_attempts >= 3:
-                    st.warning("🔒 Too many failed attempts! Redirecting to Login Page.")
-                    st.session_state.page = 'Login'
-                    st.rerun()
-        else:
-            st.error("⚠️ Both fields are required!")
+                st.error("⚠️ Both fields are required!")
+if st.session_state.page == "Login":
+    with tab3:
+        st.subheader("🔑 Reauthorization Required")
+        login_pass = st.text_input("Enter Master Password:", type="password", key="login_pass")
 
-elif st.session_state.page == "Login":
-    st.title("🔒 Secure Data Encryption System")
-    st.subheader("🔑 Reauthorization Required")
-    login_pass = st.text_input("Enter Master Password:", type="password")
-
-    if st.button("Login"):
-        if login_pass == "admin123":  # Hardcoded demo password
-            st.session_state.failed_attempts = 0
-            st.session_state.page = "Retrieve Data"
-            st.success("✅ Reauthorized successfully! Redirecting to Retrieve Data...")
-            st.rerun()
-        else:
-            st.error("❌ Incorrect password!")
+        if st.button("Login"):
+            if login_pass == "admin123":  # Hardcoded demo password
+                st.session_state.failed_attempts = 0
+                st.session_state.page = "Retrieve Data"
+                st.success("✅ Reauthorized successfully! Redirecting to Retrieve Data...")
+                st.rerun()
+            else:
+                st.error("❌ Incorrect password!")

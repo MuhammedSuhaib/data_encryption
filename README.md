@@ -16,6 +16,3 @@ This project is a simple web application for securely storing and retrieving enc
 - To retrieve data, the correct passkey must be provided.
 
 
-## Future Improvements
-- Implement a more robust user authentication system.
-- st.tabs intstead of st.sidebar for navigation.
