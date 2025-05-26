@@ -53,7 +53,7 @@ if st.session_state.failed_attempts >= 3:
     st.session_state.page = 'Login'
 
 st.title("🔒 Secure Data Encryption System")
-tab1, tab2, tab3 = st.tabs(["Store Data", "Retrieve Data", "Login"])
+tab1, tab2, tab3 ,tab4= st.tabs(["Store Data", "Retrieve Data", "Login",'Developer Tools'])
 #* Store Data Tab 
 with tab1:
     st.subheader("📂 Store Data Securely")
@@ -117,3 +117,6 @@ else:
     with tab3:
         st.subheader("🔑 You are logged in!")
         st.write("You can now store and retrieve your data securely.")
+with tab4:
+    with st.expander("🔍 Debug: Show Stored Data"):
+        st.json(st.session_state.stored_data)
