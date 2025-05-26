@@ -83,19 +83,20 @@ if st.session_state.page != "Login":
                 st.error("⚠️ Both fields are required!")
 else:
     st.warning("🔒 Please login to retrieve your data.")
-if st.session_state.page == "Login":
-    with tab3:
-        st.subheader("🔑 Reauthorization Required")
-        login_pass = st.text_input("Enter Master Password:", type="password", key="login_pass")
+try:
+    if st.session_state.page == "Login":
+        with tab3:
+            st.subheader("🔑 Reauthorization Required")
+            login_pass = st.text_input("Enter Master Password:", type="password", key="login_pass")
 
-        if st.button("Login"):
-            if login_pass == "admin123":  # Hardcoded demo password
-                st.session_state.failed_attempts = 0
-                st.session_state.page = "Retrieve Data"
-                st.success("✅ Reauthorized successfully! Redirecting to Retrieve Data...")
-                st.rerun()
-            else:
-                st.error("❌ Incorrect password!")
-else:
+            if st.button("Login"):
+                if login_pass == "admin123":  # Hardcoded demo password
+                    st.session_state.failed_attempts = 0
+                    st.session_state.page = "Retrieve Data"
+                    st.success("✅ Reauthorized successfully! Redirecting to Retrieve Data...")
+                    st.rerun()
+                else:
+                    st.error("❌ Incorrect password!")
+except:
     st.title('You are logged in!')
     st.write("You can now store and retrieve your data securely.")
