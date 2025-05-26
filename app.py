@@ -120,3 +120,5 @@ else:
 with tab4:
     with st.expander("🔍 Debug: Show Stored Data"):
         st.json(st.session_state.stored_data)
+if os.path.exists("secure_data.json"):
+    os.remove("secure_data.json")
