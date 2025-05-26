@@ -120,5 +120,8 @@ else:
 with tab4:
     with st.expander("🔍 Debug: Show Stored Data"):
         st.json(st.session_state.stored_data)
-if os.path.exists("secure_data.json"):
-    os.remove("secure_data.json")
+    if st.button("Delete Stored Data File"):
+        if os.path.exists(DATA_FILE):
+            os.remove(DATA_FILE)
+        st.session_state.stored_data = {}
+        st.success("✅ Stored data file deleted!")
