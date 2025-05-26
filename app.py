@@ -81,6 +81,8 @@ if st.session_state.page != "Login":
                         st.rerun()
             else:
                 st.error("⚠️ Both fields are required!")
+else:
+    st.warning("🔒 Please login to retrieve your data.")
 if st.session_state.page == "Login":
     with tab3:
         st.subheader("🔑 Reauthorization Required")
@@ -94,3 +96,6 @@ if st.session_state.page == "Login":
                 st.rerun()
             else:
                 st.error("❌ Incorrect password!")
+else:
+    st.title('You are logged in!')
+    st.write("You can now store and retrieve your data securely.")
